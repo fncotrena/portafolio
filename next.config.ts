@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+    output: 'export',
   // Desactivado para evitar que las animaciones de transición
   // (GSAP + next-transition-router) se ejecuten dos veces en desarrollo.
   reactStrictMode: false,
