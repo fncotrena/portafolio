@@ -1,0 +1,182 @@
+@import "tailwindcss";
+
+/* Activamos el modo oscuro por clase (lo controla next-themes) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Paleta monocroma: no hay color de acento. Todo lo que antes se resaltaba en
+   naranja ahora se resuelve con contraste (foreground + opacidades) y bordes:
+   `text-foreground/60` → `hover:text-foreground`, `border-foreground/25`, etc. */
+:root {
+  --background: #f5f2ec;
+  --foreground: #16150f;
+  --muted: #6f6d65;
+  --muted-foreground: #6f6d65;
+  --stroke-color: #d9d5cb;
+  --surface: #ffffff;
+  --border-soft: rgba(22, 21, 15, 0.1);
+}
+
+.dark {
+  --background: #0a0a0c;
+  --foreground: #f5f2ec;
+  --muted: #9c9a92;
+  --muted-foreground: #9c9a92;
+  --stroke-color: #262626;
+  --surface: #14141a;
+  --border-soft: rgba(255, 255, 255, 0.1);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-stroke-color: var(--stroke-color);
+  --color-surface: var(--surface);
+  --color-border-soft: var(--border-soft);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, monospace;
+  --font-caveat: var(--font-caveat-face), ui-serif, cursive;
+}
+
+html {
+  color-scheme: light;
+}
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  transition: background-color 0.4s ease, color 0.4s ease;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-soft);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--foreground);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* --------------------------- Hero (portada) ----------------------------- */
+
+/*
+  Marco del hero.
+  - `--hero-h` es el ALTO del marco. `calc(100svh - 4rem)` = casi toda la
+    ventana, dejando 2 rem arriba y 2 rem abajo (balancea con el margen
+    lateral). Poné `100svh` para que toque los bordes, o algo como `86svh`
+    si querés más aire.
+  - El ancho sale de la proporción de la foto (`--hero-ratio`, que escribe
+    `FluidReveal.tsx`), así el `object-cover` del shader recorta lo mínimo.
+    Ojo: si `--hero-h` no respeta esa proporción, la foto se recorta a los
+    costados (nunca arriba ni abajo).
+  - En celular ocupa el ancho completo, que es lo natural en vertical.
+*/
+.hero-frame {
+  --hero-h: calc(100svh - 4rem);
+  height: var(--hero-h);
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .hero-frame {
+    width: min(100%, calc(var(--hero-h) * var(--hero-ratio, 1.7778)));
+  }
+}
+
+/*
+  Velo sobre la foto: sube el contraste del texto sin taparla.
+  Es un degradado de arriba hacia abajo (donde vive el texto) y se apaga por
+  completo antes de llegar al borde inferior, así la foto queda nítida abajo.
+  Sigue al tema: en claro aclara, en oscuro oscurece.
+*/
+.hero-veil {
+  background: linear-gradient(
+    to bottom,
+    color-mix(in oklab, var(--background) 82%, transparent) 0%,
+    color-mix(in oklab, var(--background) 66%, transparent) 32%,
+    color-mix(in oklab, var(--background) 14%, transparent) 68%,
+    transparent 88%
+  );
+}
+
+/* ------------------------------ Utilidades ------------------------------ */
+
+img {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+/* En pantallas táctiles no existe el hover: los tooltips se quedarían pegados,
+   así que los ocultamos (los botones ya tienen aria-label). */
+@media (hover: none) {
+  [role="tooltip"] {
+    display: none;
+  }
+}
+
+/* La View Transitions API no debe animar por su cuenta: lo hacemos nosotros. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Texto con glow de LED rojo */
+  .led-text {
+    color: #ff2a2a;
+    text-shadow:
+      0 0 2px #ff0000,
+      0 0 4px #ff0000,
+      0 0 8px rgba(255, 0, 0, 0.8),
+      0 0 12px rgba(255, 40, 40, 0.6);
+  }
+
+  @keyframes led-scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-led-scroll {
+    animation: led-scroll 8s linear infinite;
+    will-change: transform;
+  }
+}
