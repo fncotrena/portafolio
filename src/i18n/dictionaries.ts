@@ -211,14 +211,14 @@ const es = {
   },
   experience: {
     heading: "Experiencia",
-    lead: "Más de 3 años construyendo interfaces para sistemas de gestión internos.",
+    lead: "Desarrollo de interfaces web con Angular y TypeScript, enfocadas en usabilidad, mantenibilidad y experiencia de usuario",
     contactText:
       "Actualmente estoy buscando una oportunidad remota o híbrida donde seguir aportando mi experiencia y seguir creciendo como profesional.",
     contactCta: "Enviar un mail",
     contactCv: "Ver CV",
     items: [
       {
-        role: "Front End Developer | Angular | Node.js",
+        role: ROLE + " | Angular | Node.js",
         company: "Intermares",
         employmentType: "Jornada completa",
         period: "ene. 2023 - abr. 2026",
@@ -227,7 +227,7 @@ const es = {
         workMode: "Híbrido",
         subtitle: " Software Engineer Front End",
         summary:
-          "Desarrollé y mantuve un sistema de gestión interno de punta a punta: interfaces, APIs y base de datos. Estas fueron mis principales responsabilidades y funcionalidades:",
+          "Desarrollé y mantuve un sistema de gestión interno, desde las interfaces de usuario hasta las APIs y la integración con la base de datos. Entre las principales funcionalidades que implementé se encuentran:",
         stack: [
           "Angular",
           "TypeScript",
@@ -498,21 +498,21 @@ const en: Dictionary = {
   },
   experience: {
     heading: "Experience",
-    lead: "Over 3 years building interfaces for internal management systems.",
+    lead: "Development of web interfaces with Angular and TypeScript, focused on usability, maintainability, and user experience.",
     contactText:
       "I'm currently looking for a remote or hybrid opportunity where I can keep contributing my experience and keep growing as a professional.",
     contactCta: "Send an email",
     contactCv: "View CV",
     items: [
       {
-        role: "Front End Developer | Angular | Node.js",
+        role: ROLE +" | Angular | Node.js",
         company: "Intermares",
         employmentType: "Full-time",
         period: "Jan 2023 - Apr 2026",
         duration: "3 yrs 4 mos",
         location: "Puerto Madryn, Chubut Province, Argentina",
         workMode: "Hybrid",
-        subtitle: "Frontend Developer — Internal management system",
+        subtitle: ROLE+" — Internal management system",
         summary:
           "I built and maintained an internal management system end to end: interfaces, APIs and database. These were my main responsibilities and features:",
         stack: [
