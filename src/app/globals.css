@@ -155,28 +155,4 @@ img {
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
-
-  /* Texto con glow de LED rojo */
-  .led-text {
-    color: #ff2a2a;
-    text-shadow:
-      0 0 2px #ff0000,
-      0 0 4px #ff0000,
-      0 0 8px rgba(255, 0, 0, 0.8),
-      0 0 12px rgba(255, 40, 40, 0.6);
-  }
-
-  @keyframes led-scroll {
-    0% {
-      transform: translateX(0);
-    }
-    100% {
-      transform: translateX(-50%);
-    }
-  }
-
-  .animate-led-scroll {
-    animation: led-scroll 8s linear infinite;
-    will-change: transform;
-  }
 }

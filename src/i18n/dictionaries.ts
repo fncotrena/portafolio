@@ -42,11 +42,6 @@ const NAME = "Federico Cotrena";
 const ROLE = "Software Engineer (Front End)";
 
 const es = {
-  meta: {
-    title: "Estudio — Portafolio",
-    description:
-      "Portafolio de un desarrollador frontend que construye interfaces donde la creatividad se encuentra con la ingeniería.",
-  },
   nav: {
     home: "Inicio",
     about: "Sobre mí",
@@ -55,12 +50,9 @@ const es = {
     contact: "Contacto",
     theme: "Cambiar tema",
     language: "Cambiar idioma",
-    brand: "Estudio",
   },
   common: {
     openToWork: "( Disponible para trabajar )",
-    menu: "Menú",
-    backHome: "Volver al inicio",
   },
   home: {
     role: ROLE,
@@ -72,10 +64,8 @@ const es = {
     cv: "Ver CV",
     github: "GitHub",
     linkedin: "LinkedIn",
-    scroll: "Desplázate",
   },
   about: {
-    eyebrow: "Sobre mí",
     heading: "Quién soy",
     lead: "Software Engineer con más de 3 años de experiencia profesional, orientado a Frontend con Angular y Node.js. Graduado como Analista y Programador Universitario y estudiante avanzado de la Licenciatura en Informática, ambas en la UNPSJB. Me interesa el trabajo en equipo y el desarrollo de soluciones adaptadas a las necesidades del negocio. Buscando una oportunidad remota o híbrida donde seguir aportando mi experiencia y seguir creciendo como desarrollador.",
     location: "Puerto Madryn, Chubut · Argentina",
@@ -145,7 +135,6 @@ const es = {
     ] as EducationEntry[],
   },
   projects: {
-    eyebrow: "Portafolio",
     heading: "Proyectos destacados",
     lead: "Una selección de trabajos donde combiné arquitectura, producto ,código limpio y trabajo colaborativo" ,
     items: [
@@ -335,20 +324,11 @@ const es = {
       },
     ] as ExperienceEntry[],
   },
-  footer: {
-    rights: "Todos los derechos reservados.",
-    builtWith: "Hecho con Next.js, Tailwind CSS y GSAP.",
-  },
 };
 
 export type Dictionary = typeof es;
 
 const en: Dictionary = {
-  meta: {
-    title: "Studio — Portfolio",
-    description:
-      "Portfolio of a frontend developer building interfaces where creativity meets engineering.",
-  },
   nav: {
     home: "Home",
     about: "About",
@@ -357,12 +337,9 @@ const en: Dictionary = {
     contact: "Contact",
     theme: "Toggle theme",
     language: "Toggle language",
-    brand: "Studio",
   },
   common: {
     openToWork: "( Open to work )",
-    menu: "Menu",
-    backHome: "Back home",
   },
   home: {
     role: ROLE,
@@ -374,10 +351,8 @@ const en: Dictionary = {
     cv: "View CV",
     github: "GitHub",
     linkedin: "LinkedIn",
-    scroll: "Scroll",
   },
   about: {
-    eyebrow: "About",
     heading: "Who I am",
     lead: "Software Engineer with over 3 years of professional experience, frontend-oriented with Angular and Node.js. Graduated as a University Analyst and Programmer and an advanced student of the Bachelor's degree in Computer Science, both at UNPSJB. I'm interested in teamwork and building solutions tailored to business needs. Looking for a remote or hybrid opportunity where I can keep contributing my experience and keep growing as a developer.",
     location: "Puerto Madryn, Chubut · Argentina",
@@ -447,7 +422,6 @@ const en: Dictionary = {
     ] as EducationEntry[],
   },
   projects: {
-    eyebrow: "Portfolio",
     heading: "Featured projects",
     lead: "A selection of work where I combined architecture, product and clean code.",
     items: [
@@ -636,10 +610,6 @@ const en: Dictionary = {
         logo: "/images/experience/intermares.png",
       },
     ] as ExperienceEntry[],
-  },
-  footer: {
-    rights: "All rights reserved.",
-    builtWith: "Built with Next.js, Tailwind CSS and GSAP.",
   },
 };
 
