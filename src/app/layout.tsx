@@ -30,10 +30,68 @@ const SITE_TITLE = "Federico Cotrena — Software Engineer";
 const SITE_DESCRIPTION =
   "Portafolio de Federico Cotrena: Software Engineer con más de 3 años construyendo aplicaciones web con Angular, TypeScript y Node.js. Analista y Programador graduado de la UNPSJB.";
 
+const AUTHOR = "Federico Cotrena";
+const AUTHOR_ROLE = "Software Engineer (Front End)";
+const GITHUB_URL = "https://github.com/fncotrena";
+const LINKEDIN_URL = "https://www.linkedin.com/in/federico-nicolas-cotrena/";
+
+// Datos estructurados (schema.org/Person): es lo que leen Google y LinkedIn
+// para saber quién está detrás del sitio. No se ve en pantalla.
+const personJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: AUTHOR,
+  givenName: "Federico",
+  familyName: "Cotrena",
+  jobTitle: AUTHOR_ROLE,
+  description: SITE_DESCRIPTION,
+  url: SITE_URL,
+  image: `${SITE_URL}/og.png`,
+  sameAs: [GITHUB_URL, LINKEDIN_URL],
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Puerto Madryn",
+    addressRegion: "Chubut",
+    addressCountry: "AR",
+  },
+  alumniOf: {
+    "@type": "CollegeOrUniversity",
+    name: "Universidad Nacional de la Patagonia San Juan Bosco",
+  },
+  knowsAbout: [
+    "Angular",
+    "TypeScript",
+    "JavaScript",
+    "RxJS",
+    "Node.js",
+    "Express",
+    "MySQL",
+    "Sequelize",
+    "REST APIs",
+    "WebSockets",
+    "React",
+    "Next.js",
+  ],
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: "Estudio — Portafolio",
   description: SITE_DESCRIPTION,
+  applicationName: "Portafolio — Federico Cotrena",
+  authors: [{ name: AUTHOR, url: GITHUB_URL }],
+  creator: AUTHOR,
+  publisher: AUTHOR,
+  keywords: [
+    "Federico Cotrena",
+    "Software Engineer",
+    "Frontend Developer",
+    "Angular",
+    "TypeScript",
+    "Node.js",
+    "Portafolio",
+    "Puerto Madryn",
+  ],
   alternates: {
     canonical: "/",
   },
@@ -74,6 +132,10 @@ export default function RootLayout({
       className={`${inter.variable} ${jetbrains.variable} ${caveat.variable}`}
     >
       <body className="font-sans antialiased">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+        />
         <AppProviders>{children}</AppProviders>
         <Analytics />
       </body>
