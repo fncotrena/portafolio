@@ -23,25 +23,21 @@ export default function ProjectsContent() {
             transition={{ duration: 0.5, delay: 0.06 * i, ease: EASE }}
             className="group rounded-2xl border border-border-soft bg-surface/50 p-6 backdrop-blur-sm transition-colors hover:border-foreground/25 md:p-8"
           >
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-                <h2 className="text-xl font-semibold tracking-tight">
-                  {project.title}
-                </h2>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+              <h2 className="text-xl font-semibold tracking-tight">
+                {project.title}
+              </h2>
 
-                {project.status && (
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-foreground/30 bg-foreground/5 px-2.5 py-0.5 text-xs font-medium text-foreground">
-                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-foreground" />
-                    {project.status}
-                  </span>
-                )}
-
-                <span className="rounded-md border border-border-soft px-2 py-0.5 text-xs text-muted">
-                  {project.architecture}
+              {project.status && (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-foreground/30 bg-foreground/5 px-2.5 py-0.5 text-xs font-medium text-foreground">
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-foreground" />
+                  {project.status}
                 </span>
-              </div>
+              )}
 
-              <span className="font-mono text-xs text-muted">0{i + 1}</span>
+              <span className="rounded-md border border-border-soft px-2 py-0.5 text-xs text-muted">
+                {project.architecture}
+              </span>
             </div>
 
             <p className="mt-4 max-w-3xl leading-relaxed text-foreground/70">
