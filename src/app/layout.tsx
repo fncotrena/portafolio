@@ -132,6 +132,10 @@ export default function RootLayout({
       className={`${inter.variable} ${jetbrains.variable} ${caveat.variable}`}
     >
       <body className="font-sans antialiased">
+        {/* Si el JS no corre, la cortina de carga se esconde desde el arranque. */}
+        <noscript>
+          <style>{`[data-transition-overlay]{display:none!important}`}</style>
+        </noscript>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}

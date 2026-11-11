@@ -1,13 +1,20 @@
 "use client";
 
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { TransitionRouter } from "next-transition-router";
 import { animate } from "framer-motion";
+import IntroLoader from "./IntroLoader";
+import { HERO_READY_EVENT, isHeroReady } from "@/lib/heroReady";
 
 const BLIND_COUNT = 8;
 const BLIND_DURATION = 0.5;
 const BLIND_STAGGER = 0.045;
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
+
+// Intro de la primera carga: piso en pantalla (para que no sea un parpadeo)
+// y tope máximo de espera (si el hero no avisa, se destapa igual).
+const INTRO_MIN_MS = 450;
+const INTRO_MAX_MS = 3000;
 
 // Garantiza que el callback se ejecute una sola vez.
 function once(fn: () => void) {
@@ -27,6 +34,8 @@ export default function TransitionProvider({
   const overlayRef = useRef<HTMLDivElement>(null);
   const blindsRef = useRef<HTMLDivElement>(null);
   const loaderRef = useRef<HTMLDivElement>(null);
+  // La intro se destapa una sola vez por carga de página.
+  const revealedRef = useRef(false);
 
   const getBlinds = () =>
     blindsRef.current ? Array.from(blindsRef.current.children) : [];
@@ -37,6 +46,50 @@ export default function TransitionProvider({
       blocking ? "auto" : "none"
     );
   };
+
+  // Levanta las persianas y descubre la pantalla. Lo usan la intro y las
+  // entradas. `fadeLoader` solo en la intro: en las navegaciones no queremos
+  // que el nombre aparezca y desaparezca.
+  const openBlinds = useCallback((done: () => void, fadeLoader = false) => {
+    const blinds = getBlinds();
+    const finish = once(() => {
+      setBlocking(false);
+      done();
+    });
+
+    const controls = blinds.map((blind, i) =>
+      animate(
+        blind,
+        { scaleY: [1, 0] },
+        {
+          duration: BLIND_DURATION,
+          delay: i * BLIND_STAGGER,
+          ease: EASE,
+          ...(i === blinds.length - 1 ? { onComplete: finish } : {}),
+        }
+      )
+    );
+
+    const loader = fadeLoader
+      ? animate(
+          loaderRef.current,
+          { opacity: [1, 0] },
+          { duration: 0.3, ease: "easeIn" }
+        )
+      : null;
+
+    if (blinds.length === 0) finish();
+
+    // Red de seguridad: si requestAnimationFrame está pausado (p. ej. la
+    // ventana queda oculta), no debe quedar bloqueada la pantalla.
+    const safety = window.setTimeout(finish, 1500);
+
+    return () => {
+      controls.forEach((control) => control.stop());
+      loader?.stop();
+      window.clearTimeout(safety);
+    };
+  }, []);
 
   // Salida: las persianas bajan y cubren la pantalla; después navega.
   const leave = useCallback((next: () => void) => {
@@ -57,75 +110,101 @@ export default function TransitionProvider({
       )
     );
 
-    const loader = animate(
-      loaderRef.current,
-      { opacity: [0, 1] },
-      { duration: 0.35, ease: "easeOut" }
-    );
-
     if (blinds.length === 0) done();
 
-    // Red de seguridad: si requestAnimationFrame está pausado (p. ej. la
-    // ventana queda oculta), la navegación no debe quedar bloqueada.
     const safety = window.setTimeout(done, 1400);
 
     return () => {
       controls.forEach((control) => control.stop());
-      loader.stop();
       window.clearTimeout(safety);
     };
   }, []);
 
   // Entrada: las persianas se retiran y descubren la nueva pantalla.
-  const enter = useCallback((next: () => void) => {
-    const blinds = getBlinds();
-    const done = once(next);
+  const enter = useCallback(
+    (next: () => void) => openBlinds(next),
+    [openBlinds]
+  );
 
-    const finish = () => {
+  // La cortina ya viene cerrada desde el HTML. Acá esperamos a que la página
+  // esté cargada (y, si hay hero, a que haya pintado) para levantarla.
+  useEffect(() => {
+    const overlay = overlayRef.current;
+    if (!overlay) return;
+
+    // Desactiva el failsafe de CSS: con JS corriendo manda esta lógica.
+    overlay.style.animation = "none";
+
+    const reduce = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (reduce) {
+      getBlinds().forEach((blind) => {
+        (blind as HTMLElement).style.transform = "scaleY(0)";
+      });
+      if (loaderRef.current) loaderRef.current.style.opacity = "0";
       setBlocking(false);
-      done();
+      return;
+    }
+
+    const hasHero = Boolean(document.querySelector("[data-hero]"));
+    let loaded = document.readyState === "complete";
+    let heroReady = isHeroReady();
+
+    const reveal = () => {
+      // El ref evita un segundo destape (p. ej. si el tope llega después del
+      // aviso del hero): volver a animar 1 → 0 produciría un parpadeo.
+      if (revealedRef.current) return;
+      revealedRef.current = true;
+      openBlinds(() => {}, true);
     };
 
-    const controls = blinds.map((blind, i) =>
-      animate(
-        blind,
-        { scaleY: [1, 0] },
-        {
-          duration: BLIND_DURATION,
-          delay: i * BLIND_STAGGER,
-          ease: EASE,
-          ...(i === blinds.length - 1 ? { onComplete: finish } : {}),
-        }
-      )
-    );
+    const tryReveal = () => {
+      if (!loaded) return;
+      if (hasHero && !heroReady) return;
+      reveal();
+    };
 
-    const loader = animate(
-      loaderRef.current,
-      { opacity: [1, 0] },
-      { duration: 0.3, ease: "easeIn" }
-    );
+    const onLoad = () => {
+      loaded = true;
+      tryReveal();
+    };
+    const onHero = () => {
+      heroReady = true;
+      tryReveal();
+    };
 
-    if (blinds.length === 0) finish();
+    // Piso: nunca menos de INTRO_MIN_MS en pantalla.
+    const minTimer = window.setTimeout(tryReveal, INTRO_MIN_MS);
+    // Tope: si el hero no avisa (o algo se cuelga), se destapa igual.
+    const capTimer = window.setTimeout(() => {
+      loaded = true;
+      reveal();
+    }, INTRO_MAX_MS);
 
-    const safety = window.setTimeout(finish, 1500);
+    window.addEventListener("load", onLoad, { once: true });
+    window.addEventListener(HERO_READY_EVENT, onHero, { once: true });
 
     return () => {
-      controls.forEach((control) => control.stop());
-      loader.stop();
-      window.clearTimeout(safety);
+      window.clearTimeout(minTimer);
+      window.clearTimeout(capTimer);
+      window.removeEventListener("load", onLoad);
+      window.removeEventListener(HERO_READY_EVENT, onHero);
     };
-  }, []);
+  }, [openBlinds]);
 
   return (
     <TransitionRouter leave={leave} enter={enter} auto>
       {children}
 
-      {/* Cortina de persianas + loader */}
+      {/* Cortina de persianas. Arranca cerrada (scaleY(1)) para tapar el
+          arranque del sitio antes de que hidrate React. */}
       <div
         ref={overlayRef}
         aria-hidden
         data-transition-overlay
-        className="pointer-events-none fixed inset-0 z-[100] overflow-hidden"
+        className="fixed inset-0 z-[100] overflow-hidden"
       >
         <div ref={blindsRef} className="absolute inset-0 flex">
           {Array.from({ length: BLIND_COUNT }).map((_, i) => (
@@ -135,7 +214,7 @@ export default function TransitionProvider({
               style={{
                 width: `${100 / BLIND_COUNT}%`,
                 transformOrigin: "top",
-                transform: "scaleY(0)",
+                transform: "scaleY(1)",
               }}
             />
           ))}
@@ -143,12 +222,9 @@ export default function TransitionProvider({
 
         <div
           ref={loaderRef}
-          className="absolute inset-0 flex flex-col items-center justify-center gap-4 opacity-0"
+          className="absolute inset-0 flex flex-col items-center justify-center"
         >
-          <span className="h-10 w-10 animate-spin rounded-full border-2 border-background/20 border-t-background" />
-          <span className="font-mono text-[11px] uppercase tracking-[0.35em] text-background">
-            Estudio
-          </span>
+          <IntroLoader />
         </div>
       </div>
     </TransitionRouter>

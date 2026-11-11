@@ -12,6 +12,7 @@ import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
 import { useTheme } from "next-themes";
+import { markHeroReady } from "@/lib/heroReady";
 
 /**
  * Revelado fluido del hero.
@@ -179,6 +180,13 @@ function FluidPlane({ frontImage, backImage }: FluidPlaneProps) {
   const materialRef = useRef<THREE.ShaderMaterial>(null);
   const { gl, viewport } = useThree();
   const [front, back] = useTexture([frontImage, backImage]);
+
+  // Las texturas ya resolvieron y el plano existe: avisamos para que la
+  // cortina de carga se destape recién ahora (y no antes, con la caja vacía).
+  useEffect(() => {
+    const id = requestAnimationFrame(() => markHeroReady());
+    return () => cancelAnimationFrame(id);
+  }, []);
 
   // THREE.Timer reemplaza al deprecado THREE.Clock
   const timer = useMemo(() => new THREE.Timer(), []);

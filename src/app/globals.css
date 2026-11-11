@@ -156,3 +156,38 @@ img {
     display: none;
   }
 }
+
+/* Intro de carga: barra que se llena mientras arranca el sitio. */
+@keyframes intro-bar {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.intro-bar {
+  transform-origin: left;
+  animation: intro-bar 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Failsafe: si el JS nunca llega a correr, la cortina se destapa sola a los
+   5s. Cuando el JS sí corre, TransitionProvider apaga esta animación. */
+@keyframes transition-failsafe {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+[data-transition-overlay] {
+  animation: transition-failsafe 0.4s ease 5s forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-bar,
+  [data-transition-overlay] {
+    animation: none;
+  }
+}

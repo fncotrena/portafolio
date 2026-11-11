@@ -53,6 +53,7 @@ const es = {
   },
   common: {
     openToWork: "( Disponible para trabajar )",
+    loading: "Cargando",
   },
   home: {
     role: ROLE,
@@ -340,6 +341,7 @@ const en: Dictionary = {
   },
   common: {
     openToWork: "( Open to work )",
+    loading: "Loading",
   },
   home: {
     role: ROLE,

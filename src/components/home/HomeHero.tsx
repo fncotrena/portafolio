@@ -22,6 +22,7 @@ export default function HomeHero() {
     // sale de ahí, así que la sección no lleva padding vertical.
     <section className="flex min-h-[100svh] w-full items-center justify-center px-3 sm:px-5 lg:px-8">
       <div
+        data-hero
         className="hero-frame relative overflow-hidden rounded-[22px] sm:rounded-[30px]"
         style={{ "--hero-ratio": HERO_RATIO } as CSSProperties}
       >
