@@ -60,7 +60,7 @@ const es = {
     greeting: "Hola, soy",
     name: NAME,
     intro:
-      "Más de 3 años construyendo aplicaciones web con Angular y TypeScript, con foco en interfaces modulares y mantenibles. Ahora también integro IA (LLM APIs) en el frontend. Analista y Programador graduado de la UNPSJB.",
+      "Más de 3 años construyendo aplicaciones web con Angular y TypeScript, con foco en interfaces modulares y mantenibles. Analista y Programador graduado de la UNPSJB.",
     cta: "Ver proyectos",
     cv: "Ver CV",
     github: "GitHub",
@@ -348,7 +348,7 @@ const en: Dictionary = {
     greeting: "Hey, I'm",
     name: NAME,
     intro:
-      "3+ years building web applications with Angular and TypeScript, focused on modular, maintainable interfaces. I also bring AI (LLM APIs) into the frontend. Analyst and Programmer graduate from UNPSJB.",
+      "3+ years building web applications with Angular and TypeScript, focused on modular, maintainable interfaces. Analyst and Programmer graduate from UNPSJB.",
     cta: "See projects",
     cv: "View CV",
     github: "GitHub",
